@@ -34,17 +34,17 @@ public class InvalidConfigurationTest extends WeldTestBaseWithoutTails {
     }
 
     @Test
-    public void testIncompleteGraphWithoutStrictMode() {
-        addBeanClass(IncompleteGraphBean.class);
+    public void testIncompleteChainWithoutStrictMode() {
+        addBeanClass(BeanWithIncompleteChain.class);
         initialize();
     }
 
     @Test(expected = DeploymentException.class)
-    public void testIncompleteGraphWithStrictMode() {
+    public void testIncompleteChainWithStrictMode() {
         tearDown();
         System.setProperty(STRICT_MODE_PROPERTY, "true");
         setUp();
-        addBeanClass(IncompleteGraphBean.class);
+        addBeanClass(BeanWithIncompleteChain.class);
         initialize();
     }
 
@@ -75,16 +75,16 @@ public class InvalidConfigurationTest extends WeldTestBaseWithoutTails {
     }
 
     @ApplicationScoped
-    public static class IncompleteGraphBean {
-        @Incoming("foo")
-        public void source(String x) {
-            // Do nothing.
-        }
+    public static class BeanWithIncompleteChain {
+      @Incoming("foo")
+      public void source(String x) {
+          // Do nothing.
+      }
 
-        @Outgoing("not-foo")
-        public PublisherBuilder<String> source() {
-            return ReactiveStreams.of("a", "b", "c");
-        }
+      @Outgoing("not-foo")
+      public PublisherBuilder<String> source() {
+          return ReactiveStreams.of("a", "b", "c");
+      }
     }
 
 }
